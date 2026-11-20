@@ -70,4 +70,4 @@ The suite validates every file in [demo_data](../../demo_data) against the model
 
 ## Keeping the model in sync with the schema
 
-The 'Python Model Build, Lint, and Test' pipeline regenerates the model from the schema on every relevant pull request and fails if the result differs from the committed file. A change to the JSON Schema that is not carried into the model therefore cannot pass review. See [contributing.md](../../contributing.md) for the wider schema-change checklist.
+The committed model is the file users import, so it is regenerated and committed as part of any schema change rather than built on demand. The 'Python Model Build, Lint, and Test' pipeline does not produce it: on every relevant pull request the pipeline regenerates a copy of its own, purely to compare against the committed one, and fails if the two differ. A change to the JSON Schema that is not carried into the model therefore cannot pass review. See [contributing.md](../../contributing.md) for the wider schema-change checklist.
