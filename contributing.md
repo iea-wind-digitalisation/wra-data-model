@@ -35,6 +35,7 @@ Typical files that are modified when working on an Issue are:
 - The [data model](https://github.com/IEA-Task-43/digital_wra_data_standard/blob/master/schema/iea43_wra_data_model.schema.json) itself
 - The [demo file](https://github.com/IEA-Task-43/digital_wra_data_standard/blob/master/demo_data/iea43_wra_data_model.json) implementation
 - The [create SQL](https://github.com/IEA-Task-43/digital_wra_data_standard/blob/master/tools/iea43_wra_data_model_postgresql.sql) statements
+- The [Pydantic data model](https://github.com/IEA-Task-43/digital_wra_data_standard/blob/master/tools/pydantic_model), which is generated from the JSON Schema and must be regenerated rather than edited by hand
 - The [CHANGELOG.md](https://github.com/IEA-Task-43/digital_wra_data_standard/blob/master/CHANGELOG.md)
 
 Be sure to periodically synchronize the upstream `dev` branch into your feature branch to avoid conflicts in the pull request. 
@@ -70,6 +71,7 @@ Tools like [jsonschemavalidator](https://www.jsonschemavalidator.net/) can help 
 on the left and the demo file on the right. If it is valid the green tick with "No errors found. JSON validates against the schema" will be shown.
 * Ensure that the PostgreSQL create table SQL statements contained in [iea43_wra_data_model_postgresql.sql](https://github.com/IEA-Task-43/digital_wra_data_standard/blob/master/tools/iea43_wra_data_model_postgresql.sql)
 are compatible with the adjusted Schema. If relevant, update the demo data SQL statements too [iea43_wra_data_model_demo_data.sql](https://github.com/IEA-Task-43/digital_wra_data_standard/blob/master/demo_data/iea43_wra_data_model_demo_data.sql).
+* Regenerate the Pydantic data model by running `poetry run poe generate` from the `tools/pydantic_model` directory, and commit the result. The model is generated from the JSON Schema and is never edited by hand. The 'Python Model Build, Lint, and Test' pipeline regenerates the model itself and fails if it differs from the committed one, so a schema change that is not carried into the model will not pass review.
 
 **Documentation:** TBD
 <!---Include any relevant changes to inline documentation, as well as any changes to the RST files located in /sphinx.--->
@@ -90,3 +92,20 @@ TBD but may define guidelines for validating the schema
 All code should be paired with a corresponding unit or integration test.
 digital_wra_data_standard uses pytest and the built in unittest framework.
 For instructions on running tests, please see the [Readme](testing link).-->
+
+## Creating a GitHub Release
+
+When creating a release, make sure the tag follows the format: `vX.X.X-YYYY.MM`. This format is used in URLs, so 
+it's important to maintain consistency across all releases.
+
+Attach the relevant JSON Schema file as a release asset. This ensures a fixed, versioned copy of the schema that 
+cannot be modified later. In code pipelines do not link to the file in the master (or main) branch, as that version 
+may continue to receive updates not yet included in an official release. It is recommended to link to this file
+added in the release.
+
+In the release description, include:
+- A brief paragraph summarising the main additions or changes in this release.
+- The full changelog content for the release (copied from the project changelog).
+- Include the changelog from the Digital Calibration Certificate or the Floating Lidar File Format if any changes were made since the last release.
+
+Finally, review all details to ensure accuracy, then publish the release.

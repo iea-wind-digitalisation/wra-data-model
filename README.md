@@ -50,42 +50,20 @@ the JSON data-interchange format. See Figure 1 below for a snippet of an example
 <br>
 _Figure 1: Example implementation of the WRA Data Model._
 
-## Tools
 The following tools are part of this undertaking:
 
 - [WRA Data Model](./schema/iea43_wra_data_model.schema.json): This JSON Schema file is the _WRA Data Model_. It describes 
   how a JSON file that describes wind resource measurement data should be composed.
 
-- [Documentation](./docs/README.md): Markdown documentation for the _WRA Data Model_ created directly from the JSON Schema.
+- [Documentation](https://iea-task-43.github.io/digital_wra_data_standard/docs/schema_doc.html): HTML documentation for the _WRA Data Model_ created directly from the JSON Schema.
 
 - [Form App](https://iea-task-43.github.io/digital_wra_data_standard/): This app shows a form that is modeled after the 
   JSON Schema and can create JSON data out of your inputs that is in accordance with the _WRA Data Model_.
 
-- [PostgreSQL Data Model](wra_data_model_postgresql): This SQL file contains the SQL statements to create a PostgreSQL 
-  database that is in accordance with the _WRA Data Model_. It can be used to create a database that can be used to 
-  store data that is in accordance with the _WRA Data Model_.
+- [Python Data Model Loading Example](./tools/load_demo_schema.ipynb): This notebook shows how to read an example file that 
+  uses the _WRA Data Model_ with Python. [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/IEA-Task-43/digital_wra_data_standard/master?filepath=.%2Ftools%2Fload_demo_schema.ipynb)
 
-- [Pydantic Data Model](wra_data_model_pydantic): This Python file contains the Pydantic data model that is in accordance 
-  with the _WRA Data Model_. It can be used to create a Python object that can be used to interact with the data in a 
-  more object-oriented way. Modern IDEs can also provide code completion and type checking when using a Pydantic data 
-  model.
-
-## Examples
-Example data files that are in accordance with the _WRA Data Model_ can be found in the [demo_data](./demo_data) folder. 
-
-Example usage of the _WRA Data Model_ can be found the [examples](./examples) folder in several Python Notebooks:
-- [Python Loading data Example](./examples/load_demo_schema.ipynb): This notebook shows how to read an example file that 
-  uses the _WRA Data Model_ with Python. [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/IEA-Task-43/digital_wra_data_standard/master?filepath=.%examples%2Fload_demo_schema.ipynb)
-- [Python Loading data Example with Pydantic](./examples/load_demo_schema_to_model.ipynb): This notebook shows how to 
-  read an example file that uses the _WRA Data Model_ with Python and the Pydantic data model. 
-
-A python environment is provided via [Poetry](https://python-poetry.org/) to make it easy to install the required
-dependencies to use the example notebooks. To install the dependencies, run the following command from the root of 
-this repository:
-
-```bash
-poetry install
-```
+- [Pydantic Data Model](./tools/pydantic_model): A Python implementation of the _WRA Data Model_, generated from the JSON Schema. It validates and parses JSON data files against the _WRA Data Model_ and provides code completion and type checking in modern IDEs.
 
 ## Dissemination
 The Task 43 team is actively working to disseminate information and improve user experience. 
@@ -100,7 +78,22 @@ point to learn more via tutorials, recorded presentations, videos and more.
 
 As a requirement resulting from the development of the _WRA Data Model_, a 
 [digital calibration certificate](./digital_calibration_certificate) is introduced as a complementary standard. This 
-standard currently supports anemometer calibration certificates according to IEC 61400-12-1:2017. 
+standard currently supports anemometer calibration certificates according to IEC 61400-12-1:2017.
+
+The Digital Calibration Certificate has its own independent versioning which differs from the overall repository 
+release version. Please see the release notes for details on which schema version is included in each release. 
+
+<br>
+
+# Floating Lidar File Format
+
+The [floating lidar file format](./floating_lidar_file_format) section contains a proposed standardised file format for 
+floating lidar data delivery. Developed in collaboration with floating lidar OEMs, this format aims to support 
+consistent and efficient processing of floating lidar datasets from OEMs to data consumers. It defines a common 
+structure for specifying key measurements and metadata in a clear, machine-readable format.
+
+The Floating Lidar File Format has its own independent versioning which differs from the overall repository 
+release version. Please see the release notes for details on which schema version is included in each release. 
 
 <br>
 
@@ -121,7 +114,8 @@ You can find out more about the IEA's Wind Task 43 working group at [ieawindtask
 
 
 ## Pipeline Status
-| Pipeline | Status                                                                                                                                                     | Result                                                               |
-|:---------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------------------------|
-| Documentation | ![Compile Documentation to Markdown](https://github.com/IEA-Task-43/digital_wra_data_standard/workflows/Compile%20Documentation%20to%20Markdown/badge.svg) | [Documentation](./docs/README.md)                                    |
+| Pipeline | Status | Result |
+|:---------|:-------|:-------|
+| Documentation | ![Compile Documentation to HTML](https://github.com/IEA-Task-43/digital_wra_data_standard/workflows/Compile%20Documentation%20to%20HTML/badge.svg) | [Documentation](https://iea-task-43.github.io/digital_wra_data_standard/docs/schema_doc.html) |
 | Form App | ![Deploy Form App to GitHub Pages](https://github.com/IEA-Task-43/digital_wra_data_standard/workflows/Deploy%20Form%20App%20to%20GitHub%20Pages/badge.svg) | [Form App](https://iea-task-43.github.io/digital_wra_data_standard/) |
+| Pydantic Data Model | ![Python Model Build, Lint, and Test](https://github.com/IEA-Task-43/digital_wra_data_standard/workflows/Python%20Model%20Build%2C%20Lint%2C%20and%20Test/badge.svg) | [Pydantic Data Model](./tools/pydantic_model) |

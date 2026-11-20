@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$version": "1.3.0-2024.03",
+  "$version": "1.4.0-2025.06",
   "$id": "https://raw.githubusercontent.com/IEA-Task-43/digital_wra_data_standard/master/schema/iea43_wra_data_model.schema.json",
   "definitions": {
     "date_from": {
@@ -95,7 +95,10 @@
         "air_temperature",
         "water_temperature",
         "temperature",
+        "dew_point_temperature",
         "air_pressure",
+        "water_pressure",
+        "pressure",
         "air_density",
         "relative_humidity",
         "voltage",
@@ -104,6 +107,7 @@
         "power",
         "energy",
         "vertical_wind_speed",
+        "upflow_angle",
         "wind_speed_turbulence",
         "precipitation",
         "ice_detection",
@@ -112,13 +116,15 @@
         "diffuse_horizontal_irradiance",
         "global_tilted_irradiance",
         "global_normal_irradiance",
+        "reflected_irradiance",
         "albedo",
         "soiling_loss_index",
         "illuminance",
         "fog",
         "salinity",
         "conductivity",
-        "pressure",
+        "specific_conductivity",
+        "density_anomaly",
         "gps_coordinates",
         "status",
         "flag",
@@ -139,6 +145,11 @@
         "wave_directional_spread",
         "wave_period",
         "wave_peak_period",
+        "wave_period_first_frequency",
+        "wave_period_second_frequency",
+        "wave_period_zero_crossing",
+        "wave_energy_spectrum",
+        "wave_energy_spectrum_maximum",
         "water_speed",
         "vertical_water_speed",
         "water_direction",
@@ -149,6 +160,9 @@
         "tilt_x",
         "tilt_y",
         "tilt_z",
+        "pitch",
+        "roll",
+        "heading",
         "u",
         "v",
         "w",
@@ -159,8 +173,15 @@
         "water_level",
         "depth",
         "fuel_level",
+        "turbidity",
+        "visibility_in_air",
+        "speed_of_sound_in_air",
+        "speed_of_sound_in_water",
+        "mass_concentration",
+        "leaf_surface_wetness",
         "timestamp",
         "obukhov_length",
+        "row_checksum",
         "other"
       ],
       "examples": [
@@ -169,7 +190,10 @@
         "air_temperature  (outdoor ambient temperature of the air)",
         "water_temperature  (is the in situ temperature of the water. In CF Conventions this is equivalent to 'sea_water_temperature'.)",
         "temperature  (the temperature of a body or indoor ambient air temperature)",
+        "dew_point_temperature  (the temperature to which air must be cooled, at constant barometric pressure and with fixed water vapor content, for the air to become fully saturated with water vapor i.e. 100% relative humidity)",
         "air_pressure (outdoor pressure of the air)",
+        "water_pressure (the pressure of water. In CF Conventions this is equivalent to 'sea_water_pressure' and includes the pressure due to overlying sea water, sea ice, air and any other medium that may be present.)",
+        "pressure (the pressure of a medium.)",
         "air_density (the density of air)",
         "relative_humidity (outdoor relative humidity of the air",
         "voltage (electrical voltage, typically the logger battery voltage)",
@@ -178,6 +202,7 @@
         "power (the amount of energy transferred or converted per unit of time)",
         "energy (in physics, is the capacity for doing work. It may exist in potential, kinetic, thermal, electrical, chemical, nuclear, or other various forms.)",
         "vertical_wind_speed (the vertical component of wind speed)",
+        "upflow_angle (the angle between the wind velocity vector and the horizontal plane, positive when the vertical component of wind is directed upward; per IEC 61400-12-1 / IEC 61400-50-1-2022)",
         "wind_speed_turbulence (the turbulence of the wind speed)",
         "precipitation (water which falls to the ground from the atmosphere in forms of rain, snow, sleet, ice pellets, dew, frost, and hail)",
         "ice_detection (detection of ice build up on surfaces)",
@@ -186,13 +211,15 @@
         "diffuse_horizontal_irradiance (the power or instantaneous rate of energy from light scattered by the atmosphere, excluding direct irradiance, received by a horizontal surface on Earth)",
         "global_tilted_irradiance (the total power or instantaneous rate of energy from the sun received by a surface on Earth with defined tilt and azimuth, fixed or sun-tracking)",
         "global_normal_irradiance (the total power or instantaneous rate of energy from the sun received by a surface on Earth perpendicular to the sun)",
+        "reflected_irradiance (the power or instantaneous rate of energy reflected from the earth's surface, received by a downward-facing surface, typically measured by a downfacing pyranometer as part of an albedometer)",
         "albedo (or reflected solar radiation from the earth's surface, is defined as the ratio between the reflected energy and the incident energy over a unit area)",
         "soiling_loss_index (an index of lost energy between clean and dirty PV modules, https://www.campbellsci.com/cr-pvs1 )",
         "illuminance (measure of visible light falling onto a per unit area, typically measured in lux)",
         "fog (is a visible aerosol consisting of tiny water droplets or ice crystals suspended in the air at or near the Earth's surface)",
         "salinity (is the salt content of water. In CF Conventions this is equivalent to 'sea_water_salinity', 'sea_water_practical_salinity' or 'sea_water_absolute_salinity' depending on the scale been used.)",
         "conductivity (of an electrolyte solution, e.g. sea water, is a measure of its ability to conduct electricity. In CF Conventions this is equivalent to 'sea_water_electrical_conductivity' for offshore use cases.)",
-        "pressure (the pressure of a medium e.g. water. In CF Conventions this is equivalent to 'sea_water_pressure' for offshore use cases.)",
+        "specific_conductivity (of an electrolyte solution, e.g. sea water, is a measure of its ability to conduct electricity at a specific temperature. In CF Conventions this is equivalent to 'sea_water_electrical_conductivity_at_reference_temperature'.)",
+        "density_anomaly (is the density of seawater minus 1000 kg/m³, expressed this way so small but important density differences are easier to work with.)",
         "gps_coordinates (latitude and/or longitude as measured by a gps)",
         "status (a status flag or other to describe the status of a sensor or object)",
         "counter (a simple counter)",
@@ -212,6 +239,11 @@
         "wave_directional_spread (is the standard deviation of all the wave directions measured. It signifies how spread out,or how wide an area, all the waves are coming from. In CF Conventions this is equivalent to 'sea_surface_wave_directional_spread'.)",
         "wave_period (is the mean wave period measured during the observation period at a specific location. In CF Conventions this is equivalent to 'sea_surface_wave_mean_period'.)",
         "wave_peak_period (is the wave period of the most energetic waves in the total wave spectrum at a specific location. In CF Conventions this is equivalent to 'sea_surface_wave_period_at_variance_spectral_density_maximum'.)",
+        "wave_period_first_frequency (commonly referred to as Tm01, is the mean wave period calculated from the wave energy spectrum as the ratio of the zeroth spectral moment (m0) and the first spectral moment (m1). It represents the energy-weighted average period of sea surface waves and provides an estimate of the characteristic wave period that carries most of the energy in the sea state. In CF Conventions this is equivalent to 'sea_surface_wave_mean_period_from_variance_spectral_density_first_frequency_moment'.)",
+        "wave_period_second_frequency (commonly referred to as Tm02, is the mean wave period calculated from the wave energy spectrum using the ratio of the square root of the zeroth spectral moment (m0) to the second spectral moment (m2). It provides an estimate of the average wave period weighted more heavily toward higher frequencies, making it sensitive to shorter, more energetic waves in the sea state. In CF Conventions this is equivalent to 'sea_surface_wave_mean_period_from_variance_spectral_density_second_frequency_moment'.)",
+        "wave_period_zero_crossing (is the average time interval between successive individual waves where the sea surface elevation passes upwards through its mean level. In CF Conventions there is no equivalent standard name, however there is the alias 'sea_surface_wave_zero_upcrossing_period' which is part of the standard 'sea_surface_wave_mean_period'.)",
+        "wave_energy_spectrum (is a representation of how the energy (or variance) of sea surface waves is distributed across different frequencies, typically expressed in units of m^2/Hz. In CF Conventions this is equivalent to 'sea_surface_wave_variance_spectral_density'.)",
+        "wave_energy_spectrum_maximum (also referred to as the peak wave energy, is the highest spectral density value within the wave energy spectrum, indicating the greatest energy concentration at a specific frequency. This frequency is commonly used to define the peak wave period, which characterizes the dominant waves in the sea state. In CF Conventions this is equivalent to 'sea_surface_wave_energy_at_variance_spectral_density_maximum'.)",
         "water_speed (the horizontal magnitude of the water's velocity. This is sometimes also known as 'current speed' and in CF Conventions this is equivalent to 'sea_water_speed'.)",
         "vertical_water_speed (the vertical magnitude of the water's velocity. In CF Conventions this is equivalent to 'upward_sea_water_velocity'.)",
         "water_direction (the direction from which the water flow is coming from. The direction is a bearing in the usual geographical sense, measured positive clockwise from due north. This is sometimes also known as 'current direction' and in CF Conventions this is equivalent to 'sea_water_velocity_from_direction' or 'sea_water_from_direction'.)",
@@ -221,18 +253,28 @@
         "tilt_x (the tilt of an object relative to the x-axis)",
         "tilt_y (the tilt of an object relative to the y-axis)",
         "tilt_z (the tilt of an object relative to the z-axis)",
+        "pitch ((from CF Conventions for 'platform_pitch') is a rotation about an axis that is perpendicular to both the local vertical axis and the nominal forward motion direction of the sensor. If the sensor is the buoy itself, then the 'forward motion direction' can also be known as the 'first principal axis' or the 'buoy's north'. Pitch is relative to the 'at rest' rotation of the sensor with respect to the axis of rotation. The 'at rest' rotation of the sensor may change over time.)",
+        "roll ((from CF Conventions for 'platform_roll') is a rotation about an axis that is perpendicular to the local vertical axis and is coplanar with the nominal forward motion direction of the sensor. If the sensor is the buoy itself, then the 'forward motion direction' can also be known as the 'first principal axis' or the 'buoy's north'. Roll is relative to the 'at rest' rotation of the sensor with respect to the axis of rotation. The 'at rest' rotation of the sensor may change over time.)",
+        "heading (also known as yaw, (from CF Conventions for 'platform_yaw') is a rotation about the local vertical axis. Heading is relative to the 'at rest' rotation of the sensor with respect to the axis of rotation. The 'at rest' rotation of the sensor may change over time. In navigation terms, the heading of a vessel or aircraft is the compass direction in which the craft's bow or nose is pointed. Heading is typically based on cardinal directions, so 0° (or 360°) indicates a direction toward true north.)",
         "u (the U component vector, relating to wind it is positive for a west to east flow (eastward wind), however, it can be used for other vectors. If so, please use the notes property to define it.)",
         "v (the V component vector, relating to wind it is positive for a south to north flow (northward wind), however, it can be used for other vectors. If so, please use the notes property to define it.)",
-        "w (the W component vector, if using this for wind please use the 'vertical_wind_speed' measurement type. Please use the notes property to define how this component is utilised.",
+        "w (the W component vector, if using this for wind please use the 'vertical_wind_speed' measurement type. Please use the notes property to define how this component is utilised.)",
         "elevation (the height the surface of the earth is above mean sea level)",
-        "altitude (the height above mean sea level or is the angle between the sun and the observer's local horizon, also sometimes referred to as elevation)",
+        "altitude (the height above mean sea level or is the angle between the sun and the observer's local horizon, also sometimes referred to as elevation.)",
         "height (the vertical distance above a particular reference e.g. ground level.)",
-        "azimuth (is the angle of the sun around the horizon, in the northern hemisphere this is usually measured from north and increasing eastward whereas in the southern hemisphere it can be measured from the south and increasing westward)",
+        "azimuth (is the angle of the sun around the horizon, in the northern hemisphere this is usually measured from north and increasing eastward whereas in the southern hemisphere it can be measured from the south and increasing westward.)",
         "water_level (is the height of the sea surface above the sea floor. In CF Conventions this is equivalent, but opposite in respect of their point of reference, to 'sea_floor_depth_below_sea_surface'.)",
         "depth (the vertical distance below a particular reference e.g. sea level.)",
-        "fuel_level (is the amount of fuel present in the fuel tank at any given time.)",
+        "fuel_level (is the amount of fuel remaining in a tank or reservoir, typically measured as a percentage or in units like liters.)",
+        "turbidity (from CF Conventions for 'sea_water_turbidity' the turbidity is a dimensionless quantity which is expressed in NTU (Nephelometric Turbidity Units), FNU (Formazin Nephelometric Units) or FTU (Formazin Turbidity Units). Turbidity expressed in NTU is the proportion of white light scattered back to a transceiver by the particulate load in a body of water, represented on an arbitrary scale referenced against measurements made in the laboratory on aqueous suspensions of formazine beads.)",
+        "visibility_in_air ((from CF Conventions for 'visibility_in_air') the visibility is the distance at which something can be seen with Canonical Units of 'm'.)",
+        "speed_of_sound_in_air (the velocity at which acoustic waves move through the atmosphere.)",
+        "speed_of_sound_in_water (the velocity at which acoustic waves move through water, such as sea water. In CF Conventions this is known as 'speed_of_sound_in_sea_water'.)",
+        "mass_concentration (refers to the amount of mass of a substance (X) contained in a given volume of another substance (Y). It is expressed as mass per unit volume. In CF Conventions it typically appears in terms like mass_concentration_of_X_in_Y, where X is the material present in Y.)",
+        "leaf_surface_wetness (the presence and amount of moisture, such as dew, rain or fog, on the surface of a leaf or a leaf-like sensing element used as a proxy for vegetation wetness.)",
         "timestamp (the timestamp of when a measurement value was recorded)",
         "obukhov_length (a parameter with a dimension of length which, when used to scale the height above ground, gives a dimensionless stability parameter.)",
+        "row_checksum (a hash of all other fields in the row used for data integrity verification, e.g. computed using SHA-256)",
         "other"
       ]
     },
@@ -255,6 +297,7 @@
         "mbar",
         "dbar",
         "hPa",
+        "Pa",
         "atm",
         "mmHg",
         "inHg",
@@ -279,11 +322,19 @@
         "lux",
         "dB",
         "L",
+        "mL",
         "g/L",
+        "ug/L",
         "g/kg",
         "ppt",
+        "ppm",
         "psu",
+        "ntu",
+        "fnu",
+        "ftu",
         "S/m",
+        "mS/cm",
+        "μS/cm",
         "km/h",
         "(m/s)/V",
         "(m/s)/mV",
@@ -303,6 +354,8 @@
         "deg_C/mV",
         "%/V",
         "%/mV",
+        "m^2/Hz",
+        "m^2_s",
         "1",
         "-",
         null
@@ -460,7 +513,7 @@
           "longitude_ddeg": {
             "type": "number",
             "title": "Longitude [ddeg]",
-            "description": "Longitude coordinate in the Geographic Coordinate System using the WGS84 reference coordinate system, [EPSG:4326](https://epsg.io/4326). Unit of measure is in decimal degrees. Longitude lines are perpendicular to the equator where their position ranges from 0 deg at Greenwich Mean Time increasing to positive 180 deg as you move eastward and decreasing to negative 180 deg as you move westward.",
+            "description": "Longitude coordinate in the Geographic Coordinate System using the WGS84 reference coordinate system, [EPSG:4326](https://epsg.io/4326). Unit of measure is in decimal degrees. Longitude lines are perpendicular to the equator where their position ranges from 0° at Greenwich Mean Time increasing to +180° as you move eastward and decreasing to −180° as you move westward.",
             "examples": [
               -9.431
             ],
@@ -477,6 +530,8 @@
               "sodar",
               "floating_lidar",
               "wave_buoy",
+              "seabed_frame",
+              "moored",
               "adcp",
               "solar",
               "virtual_met_mast",
@@ -870,26 +925,54 @@
                 "logger_oem_id": {
                   "type": "string",
                   "title": "Logger OEM",
-                  "description": "This is the logger or remote sensing device manufacturer id as defined by the IEA Wind Resource Assessment Data Model Schema.",
-                  "enum": [
-                    "NRG Systems",
-                    "Ammonit",
-                    "Campbell Scientific",
-                    "Vaisala",
-                    "SecondWind",
-                    "Kintech",
-                    "Wilmers",
-                    "Unidata",
-                    "WindLogger",
-                    "Leosphere",
-                    "ZX Lidars",
-                    "AXYS Technologies",
-                    "AQSystem",
-                    "Pentaluum",
-                    "Nortek",
-                    "Teledyne RDI",
-                    "Aanderaa",
-                    "Other"
+                  "description": "The logger or remote sensing device manufacturer's name. In WRA Data Model versions 1.4.0 and before this was an enum; it now accepts a free-text string for forward compatibility. It is strongly advised to use a value from the suggestion list. If the manufacturer is not listed, use their official name, spelling and casing so it can be added to the list in a future release. For floating lidars where the data is sometimes packaged together onshore, this value could be the floating lidar device OEM.",
+                  "anyOf": [
+                    {
+                      "enum": [
+                        "Aanderaa",
+                        "Accurasea (GEOxyz / Aqua Vision)",
+                        "Akrocean",
+                        "Ammonit Measurement GmbH",
+                        "AQSystem",
+                        "AXYS Technologies",
+                        "Babcock International",
+                        "Blue Aspirations",
+                        "Campbell Scientific",
+                        "CLS Group",
+                        "Datawell",
+                        "EOLOS Floating Lidar Solutions",
+                        "Fraunhofer IWES",
+                        "Fugro",
+                        "Green Rebel",
+                        "Kintech Engineering",
+                        "Leosphere",
+                        "Nortek",
+                        "NRG Systems",
+                        "Pentaluum",
+                        "RBR",
+                        "RPS (Tetra Tech)",
+                        "Sea-Bird Scientific",
+                        "seaLIDAR",
+                        "SeaRoc Group",
+                        "Seatech",
+                        "SecondWind",
+                        "Sonardyne",
+                        "Star-Oddi",
+                        "Teledyne RDI",
+                        "Unidata",
+                        "Vaisala",
+                        "Valeport",
+                        "Venterra Group (Partrac)",
+                        "Wilmers",
+                        "WindLogger",
+                        "WISE Group",
+                        "ZX Lidars",
+                        "Unknown"
+                      ]
+                    },
+                    {
+                      "type": "string"
+                    }
                   ]
                 },
                 "logger_model_name": {
@@ -1141,17 +1224,35 @@
               "title": "Model Configuration",
               "properties": {
                 "reanalysis": {
-                  "type": "string",
+                  "type": [
+                    "string",
+                    "null"
+                  ],
                   "title": "Reanalysis",
-                  "description": "The name of the reanalysis dataset that is the source or the result of this model.",
-                  "enum": [
-                    "CFSR",
-                    "ERA-Interim",
-                    "ERA5",
-                    "JRA-55",
-                    "MERRA-2",
-                    "NCAR",
-                    "Other"
+                  "description": "The name of the reanalysis dataset that is the source or the result of this model. In WRA Data Model versions 1.4.0 and before this was an enum; it now accepts a free-text string for forward compatibility with newer datasets. It is strongly advised to use a value from the enum list, matching the dataset producer's official name, spelling and casing.",
+                  "anyOf": [
+                    {
+                      "enum": [
+                        "BARRA",
+                        "CERRA",
+                        "CFSR",
+                        "EARS",
+                        "ERA-Interim",
+                        "ERA5",
+                        "ERA6",
+                        "JRA-3Q",
+                        "JRA-55",
+                        "MERRA-2",
+                        "NCAR",
+                        "NORA3"
+                      ]
+                    },
+                    {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
                   ]
                 },
                 "horizontal_grid_resolution_m": {
@@ -1301,6 +1402,61 @@
                         "title": "Connection Channel",
                         "description": "The connection channel the sensor is wired into on the logger."
                       },
+                      "digital_protocol_type": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "title": "Digital Protocol Type",
+                        "description": "The digital communication protocol used to connect the sensor to the logger.",
+                        "enum": [
+                          "RS-485",
+                          "RS-232",
+                          "SDI-12",
+                          "Modbus_RTU",
+                          "I2C",
+                          "SPI",
+                          "USB",
+                          "other",
+                          null
+                        ]
+                      },
+                      "digital_com_port": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "title": "Digital COM Port",
+                        "description": "The serial communication port the sensor is connected to on the logger.",
+                        "examples": [
+                          "SERIAL1",
+                          "SERIAL2"
+                        ]
+                      },
+                      "digital_bus_channel": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "title": "Digital Bus Channel",
+                        "description": "The channel within the serial bus the sensor occupies.",
+                        "examples": [
+                          "A",
+                          "C"
+                        ]
+                      },
+                      "digital_baud_rate": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "title": "Digital Baud Rate",
+                        "description": "The baud rate of the serial communication between the sensor and the logger.",
+                        "examples": [
+                          9600,
+                          19200
+                        ]
+                      },
                       "logger_stated_boom_orientation_deg": {
                         "type": [
                           "number",
@@ -1355,10 +1511,12 @@
                                 "gust",
                                 "ti",
                                 "ti30sec",
-                                "text"
+                                "text",
+                                "value"
                               ],
                               "examples": [
-                                "ti30sec (the 10 minute average of the turbulence intensity calculated every 30 seconds within that 10 minute period.)"							  
+                                "ti30sec (the 10 minute average of the turbulence intensity calculated every 30 seconds within that 10 minute period.)",
+                                "value (a single value that may be derived or results from multiple measurements obtained within the averaging period.)"
                               ]
                             },
                             "is_ignored": {
@@ -1463,11 +1621,14 @@
                           "rain_gauge",
                           "ice_detection_sensor",
                           "fog_sensor",
+                          "leaf_wetness_sensor",
                           "gps",
                           "illuminance_sensor",
                           "compass",
                           "solar_compass",
+                          "wave_buoy",
                           "inertial_measurement_unit",
+                          "gps_motion_unit",
                           "adcp",
                           "altimeter",
                           "ctd",
@@ -1475,6 +1636,10 @@
                           "lidar",
                           "sodar",
                           "fuel_gauge",
+                          "microwave_temperature_profiler",
+                          "nephelometer",
+                          "transmissometer",
+                          "fluorometer",
                           "calc",
                           "other",
                           null

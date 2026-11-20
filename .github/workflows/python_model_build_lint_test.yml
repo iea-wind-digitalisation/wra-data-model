@@ -1,17 +1,34 @@
 name: Python Model Build, Lint, and Test
 
+# Note: GitHub Actions does not support YAML anchors, so the path filters below are
+# repeated in full for each trigger rather than shared.
 on:
   push:
     branches:
-      - main
+      - master
       - dev
-    paths-ignore:
-      - '**.md'
+    paths:
+      - 'tools/pydantic_model/**'
+      - 'schema/**'
+      - 'demo_data/**'
+      - '.github/workflows/python_model_build_lint_test.yml'
   pull_request:
+    paths:
+      - 'tools/pydantic_model/**'
+      - 'schema/**'
+      - 'demo_data/**'
+      - '.github/workflows/python_model_build_lint_test.yml'
   workflow_dispatch:
 
 env:
   PYTHON_VERSION: '3.11'
+  # The JSON Schema contains non-ASCII characters (degree sign, mu, minus sign). Without an
+  # explicit UTF-8 encoding the code generator fails on any runner defaulting to another codec.
+  PYTHONIOENCODING: utf-8
+
+defaults:
+  run:
+    working-directory: tools/pydantic_model
 
 jobs:
   test:
@@ -19,7 +36,7 @@ jobs:
     name: Build, Lint, and Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         if: github.event_name == 'pull_request' || github.event_name == 'pull_request_target'
         name: Checkout
         with:
@@ -27,7 +44,7 @@ jobs:
           lfs: "true"
           ref: refs/pull/${{ github.event.number }}/merge
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         if: github.event_name != 'pull_request' && github.event_name != 'pull_request_target'
         name: Checkout
         with:
@@ -55,12 +72,28 @@ jobs:
         id: cache
         with:
           path: |
-            .venv
+            tools/pydantic_model/.venv
             ~/.cache/pypoetry
           key: venv-${{ runner.os }}-${{ steps.install-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
 
       - name: Install dependencies from pyproject.toml
         run: poetry install
+
+      # The model is generated from schema/iea43_wra_data_model.schema.json and must never be
+      # edited by hand. Regenerating and diffing catches a schema change that was not carried
+      # into the model, and a model edited without a matching schema change.
+      - name: Regenerate the model from the JSON Schema
+        run: poetry run poe generate
+
+      - name: Fail if the committed model is out of sync with the schema
+        shell: bash
+        run: |
+          if ! git diff --quiet -- wra_data_model_pydantic/iea43_wra_data_model.py; then
+            echo "::error file=tools/pydantic_model/wra_data_model_pydantic/iea43_wra_data_model.py::The Pydantic model does not match the JSON Schema. Run 'poetry run poe generate' in tools/pydantic_model and commit the result."
+            git --no-pager diff -- wra_data_model_pydantic/iea43_wra_data_model.py
+            exit 1
+          fi
+          echo "Model is in sync with the JSON Schema."
 
       - name: Run lint tests
         run: poetry run poe lint

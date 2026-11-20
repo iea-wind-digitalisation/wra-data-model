@@ -1,0 +1,743 @@
+-- These PostgreSQL statements are a relational database representation of the
+-- IEA Wind Task 43 Wind Resource Assessment (WRA) Data Model
+
+-- Running these SQL statements in a PostgreSQL database will create the database
+-- schema and insert named reference values (enums).
+
+-- The SQL standard has tried to be used as much as possible.
+
+-- These statements match version 1.3.0-2024.03
+
+
+-- ** load plugin that generates uuids **:
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- ** create enum tables **
+CREATE TABLE IF NOT EXISTS plant_type (
+    id text PRIMARY KEY
+);
+
+CREATE TABLE IF NOT EXISTS measurement_station_type (
+    id text PRIMARY KEY
+);
+
+CREATE TABLE IF NOT EXISTS mast_geometry (
+    id text PRIMARY KEY
+);
+
+CREATE TABLE IF NOT EXISTS logger_oem (
+    id text PRIMARY KEY
+);
+
+-- ** This reanalysis table is not needed from version 1.5.0 onwards and will be removed in the version 2.0 release. **
+CREATE TABLE IF NOT EXISTS reanalysis (
+    id text PRIMARY KEY
+);
+
+CREATE TABLE IF NOT EXISTS measurement_type (
+    id text PRIMARY KEY
+);
+
+CREATE TABLE IF NOT EXISTS height_reference (
+    id text PRIMARY KEY
+);
+
+CREATE TABLE IF NOT EXISTS measurement_units (
+    id text PRIMARY KEY
+);
+
+CREATE TABLE IF NOT EXISTS statistic_type (
+    id text PRIMARY KEY
+);
+
+CREATE TABLE IF NOT EXISTS sensor_type (
+    id text PRIMARY KEY
+);
+
+CREATE TABLE IF NOT EXISTS mounting_type (
+    id text PRIMARY KEY
+);
+
+CREATE TABLE IF NOT EXISTS orientation_reference (
+    id text PRIMARY KEY
+);
+
+CREATE TABLE IF NOT EXISTS device_vertical_orientation (
+    id text PRIMARY KEY
+);
+
+CREATE TABLE IF NOT EXISTS structure_type (
+    id text PRIMARY KEY
+);
+
+CREATE TABLE IF NOT EXISTS digital_protocol_type (
+    id text PRIMARY KEY
+);
+
+-- ** insert enum values **
+INSERT INTO plant_type (id) VALUES
+    ('onshore_wind'),
+    ('offshore_wind'),
+    ('solar');
+
+INSERT INTO measurement_station_type (id) VALUES
+    ('mast'),
+    ('lidar'),
+    ('sodar'),
+    ('floating_lidar'),
+    ('wave_buoy'),
+    ('seabed_frame'),
+    ('moored'),
+    ('adcp'),
+    ('solar'),
+    ('virtual_met_mast'),
+    ('reanalysis');
+
+INSERT INTO mast_geometry (id) VALUES
+    ('lattice_triangle'),
+    ('lattice_square_round_edges'),
+    ('lattice_square_sharp_edges'),
+    ('pole');
+
+-- ** This logger_oem table is not needed from version 1.5.0 onwards and will be removed in the version 2.0 release. **
+INSERT INTO logger_oem (id) VALUES
+    ('Aanderaa'),
+    ('Accurasea (GEOxyz / Aqua Vision)'),
+    ('Akrocean'),
+    ('Ammonit Measurement GmbH'),
+    ('AQSystem'),
+    ('AXYS Technologies'),
+    ('Babcock International'),
+    ('Blue Aspirations'),
+    ('Campbell Scientific'),
+    ('CLS Group'),
+    ('Datawell'),
+    ('EOLOS Floating Lidar Solutions'),
+    ('Fraunhofer IWES'),
+    ('Fugro'),
+    ('Green Rebel'),
+    ('Kintech Engineering'),
+    ('Leosphere'),
+    ('Nortek'),
+    ('NRG Systems'),
+    ('Pentaluum'),
+    ('RBR'),
+    ('RPS (Tetra Tech)'),
+    ('Sea-Bird Scientific'),
+    ('seaLIDAR'),
+    ('SeaRoc Group'),
+    ('Seatech'),
+    ('SecondWind'),
+    ('Sonardyne'),
+    ('Star-Oddi'),
+    ('Teledyne RDI'),
+    ('Unidata'),
+    ('Vaisala'),
+    ('Valeport'),
+    ('Venterra Group (Partrac)'),
+    ('Wilmers'),
+    ('WindLogger'),
+    ('WISE Group'),
+    ('ZX Lidars'),
+    ('Unknown');
+
+INSERT INTO reanalysis (id) VALUES
+    ('BARRA'),
+    ('CERRA'),
+    ('CFSR'),
+    ('EARS'),
+    ('ERA-Interim'),
+    ('ERA5'),
+    ('ERA6'),
+    ('JRA-3Q'),
+    ('JRA-55'),
+    ('MERRA-2'),
+    ('NCAR'),
+    ('NORA3');
+
+INSERT INTO measurement_type (id) VALUES
+    ('wind_speed'),
+    ('wind_direction'),
+    ('air_temperature'),
+    ('water_temperature'),
+    ('temperature'),
+    ('dew_point_temperature'),
+    ('air_pressure'),
+    ('water_pressure'),
+    ('pressure'),
+    ('air_density'),
+    ('relative_humidity'),
+    ('voltage'),
+    ('current'),
+    ('resistance'),
+    ('power'),
+    ('energy'),
+    ('vertical_wind_speed'),
+    ('upflow_angle'),
+    ('wind_speed_turbulence'),
+    ('precipitation'),
+    ('ice_detection'),
+    ('global_horizontal_irradiance'),
+    ('direct_normal_irradiance'),
+    ('diffuse_horizontal_irradiance'),
+    ('global_tilted_irradiance'),
+    ('global_normal_irradiance'),
+    ('reflected_irradiance'),
+    ('albedo'),
+    ('soiling_loss_index'),
+    ('illuminance'),
+    ('fog'),
+    ('salinity'),
+    ('conductivity'),
+    ('specific_conductivity'),
+    ('density_anomaly'),
+    ('gps_coordinates'),
+    ('status'),
+    ('flag'),
+    ('counter'),
+    ('availability'),
+    ('quality'),
+    ('carrier_to_noise_ratio'),
+    ('doppler_spectral_broadening'),
+    ('echo_intensity'),
+    ('signal_to_noise_ratio'),
+    ('motion_corrected_wind_speed'),
+    ('motion_corrected_wind_direction'),
+    ('motion_corrected_vertical_wind_speed'),
+    ('wave_height'),
+    ('wave_significant_height'),
+    ('wave_maximum_height'),
+    ('wave_direction'),
+    ('wave_directional_spread'),
+    ('wave_period'),
+    ('wave_peak_period'),
+    ('wave_period_first_frequency'),
+    ('wave_period_second_frequency'),
+    ('wave_period_zero_crossing'),
+    ('wave_energy_spectrum'),
+    ('wave_energy_spectrum_maximum'),
+    ('water_speed'),
+    ('vertical_water_speed'),
+    ('water_direction'),
+    ('orientation'),
+    ('compass_direction'),
+    ('true_north_offset'),
+    ('tilt'),
+    ('tilt_x'),
+    ('tilt_y'),
+    ('tilt_z'),
+    ('pitch'),
+    ('roll'),
+    ('heading'),
+    ('u'),
+    ('v'),
+    ('w'),
+    ('elevation'),
+    ('altitude'),
+    ('height'),
+    ('azimuth'),
+    ('water_level'),
+    ('depth'),
+    ('fuel_level'),
+    ('turbidity'),
+    ('visibility_in_air'),
+    ('speed_of_sound_in_air'),
+    ('speed_of_sound_in_water'),
+    ('mass_concentration'),
+    ('leaf_surface_wetness'),
+    ('timestamp'),
+    ('obukhov_length'),
+    ('row_checksum'),
+    ('other');
+
+INSERT INTO height_reference (id) VALUES
+    ('ground_level'),
+    ('mean_sea_level'),
+    ('sea_level'),
+    ('lowest_astronomical_tide'),
+    ('sea_floor'),
+    ('other');
+
+INSERT INTO measurement_units (id) VALUES
+    ('m/s'),
+    ('mph'),
+    ('cm/s'),
+    ('mm/s'),
+    ('knots'),
+    ('deg'),
+    ('deg_C'),
+    ('deg_F'),
+    ('K'),
+    ('%'),
+    ('mbar'),
+    ('dbar'),
+    ('hPa'),
+    ('Pa'),
+    ('atm'),
+    ('mmHg'),
+    ('inHg'),
+    ('kg/m^2'),
+    ('kg/m^3'),
+    ('V'),
+    ('mV'),
+    ('mA'),
+    ('A'),
+    ('ohm'),
+    ('Hz'),
+    ('mm'),
+    ('m'),
+    ('s'),
+    ('W/m^2'),
+    ('W'),
+    ('kW'),
+    ('MW'),
+    ('kWh'),
+    ('MWh'),
+    ('m/s^2'),
+    ('lux'),
+    ('dB'),
+    ('L'),
+    ('mL'),
+    ('g/L'),
+    ('ug/L'),
+    ('g/kg'),
+    ('ppt'),
+    ('ppm'),
+    ('psu'),
+    ('ntu'),
+    ('fnu'),
+    ('ftu'),
+    ('S/m'),
+    ('mS/cm'),
+    ('μS/cm'),
+    ('km/h'),
+    ('(m/s)/V'),
+    ('(m/s)/mV'),
+    ('(m/s)/mA'),
+    ('(m/s)/Hz'),
+    ('(m/s)/-'),
+    ('(m/s)/(cm/s)'),
+    ('(m/s)/(km/h)'),
+    ('(m/s)/mph'),
+    ('(m/s)/knots'),
+    ('(m/s)/(m/s)'),
+    ('mbar/V'),
+    ('mbar/mV'),
+    ('hPa/V'),
+    ('hPa/mV'),
+    ('deg_C/V'),
+    ('deg_C/mV'),
+    ('%/V'),
+    ('%/mV'),
+    ('m^2/Hz'),
+    ('m^2_s'),
+    ('1'),
+    ('-');
+
+INSERT INTO statistic_type (id) VALUES
+    ('avg'),
+    ('sd'),
+    ('max'),
+    ('min'),
+    ('count'),
+    ('availability'),
+    ('quality'),
+    ('sum'),
+    ('median'),
+    ('mode'),
+    ('range'),
+    ('gust'),
+    ('ti'),
+    ('ti30sec'),
+    ('text'),
+    ('value');
+
+INSERT INTO sensor_type (id) VALUES
+    ('anemometer'),
+    ('wind_vane'),
+    ('thermometer'),
+    ('barometer'),
+    ('hygrometer'),
+    ('thermohygrometer'),
+    ('voltmeter'),
+    ('ammeter'),
+    ('pyranometer'),
+    ('pyrheliometer'),
+    ('albedometer'),
+    ('2d_ultrasonic'),
+    ('3d_ultrasonic'),
+    ('vertical_anemometer'),
+    ('propeller_anemometer'),
+    ('gill_propeller'),
+    ('rain_gauge'),
+    ('ice_detection_sensor'),
+    ('fog_sensor'),
+    ('leaf_wetness_sensor'),
+    ('gps'),
+    ('illuminance_sensor'),
+    ('compass'),
+    ('solar_compass'),
+    ('wave_buoy'),
+    ('inertial_measurement_unit'),
+    ('gps_motion_unit'),
+    ('adcp'),
+    ('altimeter'),
+    ('ctd'),
+    ('pth'),
+    ('lidar'),
+    ('sodar'),
+    ('fuel_gauge'),
+    ('microwave_temperature_profiler'),
+    ('nephelometer'),
+    ('transmissometer'),
+    ('fluorometer'),
+    ('calc'),
+    ('other');
+
+INSERT INTO mounting_type (id) VALUES
+    ('side'),
+    ('goal_post'),
+    ('top');
+
+INSERT INTO orientation_reference (id) VALUES
+    ('magnetic_north'),
+    ('true_north'),
+    ('grid_north');
+
+INSERT INTO device_vertical_orientation (id) VALUES
+    ('upward'),
+    ('downward');
+
+INSERT INTO structure_type (id) VALUES
+    ('lightning_finial'),
+    ('aviation_light'),
+    ('guy_wires'),
+    ('other');
+
+INSERT INTO digital_protocol_type (id) VALUES
+    ('RS-485'),
+    ('RS-232'),
+    ('SDI-12'),
+    ('Modbus_RTU'),
+    ('I2C'),
+    ('SPI'),
+    ('USB'),
+    ('other');
+
+
+-- ** Create main tables **
+CREATE TABLE IF NOT EXISTS plant (
+    uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name text,
+    plant_type_id text NOT NULL,
+    notes text,
+    update_at timestamp WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_by UUID,
+    FOREIGN KEY (plant_type_id) REFERENCES plant_type (id)
+);
+
+CREATE TABLE IF NOT EXISTS measurement_location(
+    uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name text NOT NULL,
+    plant_uuid UUID,
+    latitude_ddeg decimal NOT NULL CHECK (latitude_ddeg >= -90 AND latitude_ddeg <= 90),
+    longitude_ddeg decimal NOT NULL CHECK (longitude_ddeg >= -180 AND longitude_ddeg <= 180),
+    measurement_station_type_id text NOT NULL,
+    notes text,
+    update_at timestamp WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_by UUID,
+    FOREIGN KEY (plant_uuid) REFERENCES plant (uuid),
+    FOREIGN KEY (measurement_station_type_id) REFERENCES measurement_station_type (id)
+);
+
+CREATE TABLE IF NOT EXISTS mast_properties(
+    uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    mast_geometry_id text,
+    mast_oem text,
+    mast_serial_number text,
+    mast_model text,
+    mast_height_m decimal,
+    notes text,
+    update_at timestamp WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_by UUID,
+    FOREIGN KEY (mast_geometry_id) REFERENCES mast_geometry (id)
+);
+
+CREATE TABLE IF NOT EXISTS measurement_location_mast_properties(
+    measurement_location_uuid UUID,
+    mast_properties_uuid UUID,
+    date_from timestamp WITHOUT TIME ZONE,
+    date_to timestamp WITHOUT TIME ZONE,
+    PRIMARY KEY (measurement_location_uuid, mast_properties_uuid),
+    FOREIGN KEY (measurement_location_uuid) REFERENCES measurement_location (uuid),
+    FOREIGN KEY (mast_properties_uuid) REFERENCES mast_properties (uuid)
+);
+
+CREATE TABLE IF NOT EXISTS mast_section_geometry(
+    uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    mast_properties_uuid UUID,
+    mast_section_height_mm decimal,
+    pole_diameter_mm decimal,
+    lattice_face_width_at_bottom_mm decimal,
+    lattice_face_width_at_top_mm decimal,
+    lattice_leg_width_mm decimal,
+    lattice_leg_is_round_cross_section boolean,
+    lattice_bracing_member_diameter_mm decimal,
+    lattice_bracing_member_diameter_horizontal_mm decimal,
+    lattice_bracing_member_diameter_diagonal_mm decimal,
+    lattice_number_of_diagonal_bracing_members integer,
+    lattice_bracing_member_length_diagonal_mm decimal,
+    number_of_repetitive_patterns_on_face integer,
+    lattice_bracing_member_height_mm decimal,
+    lattice_has_horizontal_member boolean,
+    notes text,
+    update_at timestamp WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_by UUID,
+    FOREIGN KEY (mast_properties_uuid) REFERENCES mast_properties (uuid)
+);
+
+CREATE TABLE IF NOT EXISTS vertical_profiler_properties(
+    uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    measurement_location_uuid UUID NOT NULL,
+    device_datum_plane_height_m decimal,
+    height_reference_id text DEFAULT 'ground_level',
+    device_orientation_deg decimal CHECK (device_orientation_deg >= 0 AND device_orientation_deg <= 360),
+    orientation_reference_id text,
+    device_vertical_orientation_id text,
+    date_from timestamp WITHOUT TIME ZONE,
+    date_to timestamp WITHOUT TIME ZONE,
+    notes text,
+    update_at timestamp WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_by UUID,
+    FOREIGN KEY (measurement_location_uuid) REFERENCES measurement_location (uuid),
+    FOREIGN KEY (height_reference_id) REFERENCES height_reference (id),
+    FOREIGN KEY (orientation_reference_id) REFERENCES orientation_reference (id),
+    FOREIGN KEY (device_vertical_orientation_id) REFERENCES device_vertical_orientation (id)
+);
+
+CREATE TABLE IF NOT EXISTS logger_main_config(
+    uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    measurement_location_uuid UUID NOT NULL,
+    logger_oem_id text NOT NULL,
+    logger_model_name text,
+    logger_serial_number text NOT NULL,
+    logger_firmware_version text,
+    logger_id text,
+    logger_name text,
+    date_from timestamp WITHOUT TIME ZONE NOT NULL,
+    date_to timestamp WITHOUT TIME ZONE,
+    encryption_pin_or_key text,
+    enclosure_lock_details text,
+    data_transfer_details text,
+    offset_from_utc_hrs decimal,
+    sampling_rate_sec integer,
+    averaging_period_minutes integer,
+    timestamp_is_end_of_period boolean,
+    clock_is_auto_synced boolean,
+    logger_acquisition_uncertainty decimal,
+    uncertainty_k_factor integer,
+    notes text,
+    update_at timestamp WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_by UUID,
+    FOREIGN KEY (measurement_location_uuid) REFERENCES measurement_location (uuid)
+);
+
+CREATE TABLE IF NOT EXISTS lidar_config(
+    uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    logger_main_config_uuid UUID,
+    flow_corrections_applied boolean,
+    logger_stated_device_datum_plane_height_m decimal,
+    logger_stated_device_orientation_deg decimal,
+    date_from timestamp WITHOUT TIME ZONE,
+    date_to timestamp WITHOUT TIME ZONE,
+    notes text,
+    update_at timestamp WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_by UUID,
+    FOREIGN KEY (logger_main_config_uuid) REFERENCES logger_main_config (uuid)
+);
+
+CREATE TABLE IF NOT EXISTS model_config(
+    uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    measurement_location_uuid UUID NOT NULL,
+    reanalysis_id text,
+    horizontal_grid_resolution_m integer,
+    model_used text,
+    date_from timestamp WITHOUT TIME ZONE NOT NULL,
+    date_to timestamp WITHOUT TIME ZONE,
+    offset_from_utc_hrs decimal,
+    averaging_period_minutes integer,
+    timestamp_is_end_of_period boolean,
+    notes text,
+    update_at timestamp WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_by UUID,
+    FOREIGN KEY (measurement_location_uuid) REFERENCES measurement_location (uuid)
+);
+
+CREATE TABLE IF NOT EXISTS measurement_point(
+    uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    measurement_location_uuid UUID NOT NULL,
+    name text NOT NULL,
+    measurement_type_id text NOT NULL,
+    height_m decimal,
+    height_reference_id text DEFAULT 'ground_level',
+    notes text,
+    update_at timestamp WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_by UUID,
+    FOREIGN KEY (measurement_location_uuid) REFERENCES measurement_location (uuid),
+    FOREIGN KEY (measurement_type_id) REFERENCES measurement_type (id),
+    FOREIGN KEY (height_reference_id) REFERENCES height_reference (id)
+);
+
+CREATE TABLE IF NOT EXISTS logger_measurement_config(
+    uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    measurement_point_uuid UUID NOT NULL,
+    slope decimal,
+    "offset" decimal,  -- offset is a SQL reserved word so needs to be escaped
+    sensitivity decimal,
+    measurement_units_id text,
+    height_m decimal,
+    serial_number text,
+    connection_channel text,
+    digital_protocol_type text,
+    digital_com_port text,
+    digital_bus_channel text,
+    digital_baud_rate integer,
+    logger_stated_boom_orientation_deg decimal CHECK (logger_stated_boom_orientation_deg >= 0 AND logger_stated_boom_orientation_deg <= 360),
+    date_from timestamp WITHOUT TIME ZONE NOT NULL,
+    date_to timestamp WITHOUT TIME ZONE,
+    notes text,
+    update_at timestamp WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_by UUID,
+    FOREIGN KEY (measurement_point_uuid) REFERENCES measurement_point (uuid),
+    FOREIGN KEY (measurement_units_id) REFERENCES measurement_units (id),
+    FOREIGN KEY (digital_protocol_type) REFERENCES digital_protocol_type (id)
+);
+
+CREATE TABLE IF NOT EXISTS column_name(
+    uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    logger_measurement_config_uuid UUID NOT NULL,
+    column_name text NOT NULL,
+    statistic_type_id text NOT NULL,
+    is_ignored boolean NOT NULL DEFAULT false,
+    notes text,
+    update_at timestamp WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_by UUID,
+    FOREIGN KEY (logger_measurement_config_uuid) REFERENCES logger_measurement_config (uuid),
+    FOREIGN KEY (statistic_type_id) REFERENCES statistic_type (id)
+);
+
+CREATE TABLE IF NOT EXISTS sensor(
+    uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    oem text,
+    model text,
+    serial_number text,
+    sensor_type_id text,
+    classification text,
+    instrument_poi_height_mm decimal,
+    is_heated boolean,
+    sensor_body_size_mm decimal,
+    notes text,
+    update_at timestamp WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_by UUID,
+    FOREIGN KEY (sensor_type_id) REFERENCES sensor_type (id)
+);
+
+CREATE TABLE IF NOT EXISTS measurement_point_sensor(
+    measurement_point_uuid UUID,
+    sensor_uuid UUID,
+    date_from timestamp WITHOUT TIME ZONE NOT NULL,
+    date_to timestamp WITHOUT TIME ZONE,
+    PRIMARY KEY (measurement_point_uuid, sensor_uuid),
+    FOREIGN KEY (measurement_point_uuid) REFERENCES measurement_point (uuid),
+    FOREIGN KEY (sensor_uuid) REFERENCES sensor (uuid)
+);
+
+CREATE TABLE IF NOT EXISTS calibration(
+    uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    sensor_uuid UUID NOT NULL,
+    measurement_type_id text NOT NULL,
+    slope decimal,
+    slope_unit text,
+    "offset" decimal,  -- offset is a SQL reserved word so needs to be escaped
+    offset_unit text,
+    sensitivity decimal,
+    sensitivity_unit text,
+    report_file_name text NOT NULL,
+    report_link text,
+    calibration_id text,
+    date_of_calibration date,
+    revision text,
+    calibration_organisation text,
+    place_of_calibration text,
+    uncertainty_k_factor decimal,
+    notes text,
+    update_at timestamp WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_by UUID,
+    FOREIGN KEY (sensor_uuid) REFERENCES sensor (uuid),
+    FOREIGN KEY (measurement_type_id) REFERENCES measurement_type (id),
+    FOREIGN KEY (slope_unit) REFERENCES measurement_units (id),
+    FOREIGN KEY (offset_unit) REFERENCES measurement_units (id),
+    FOREIGN KEY (sensitivity_unit) REFERENCES measurement_units (id)
+);
+
+CREATE TABLE IF NOT EXISTS calibration_uncertainty(
+    uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    calibration_uuid UUID NOT NULL,
+    reference_bin decimal,
+    reference_unit text,
+    combined_uncertainty decimal,
+    FOREIGN KEY (calibration_uuid) REFERENCES calibration (uuid),
+    FOREIGN KEY (reference_unit) REFERENCES measurement_units (id)
+);
+
+CREATE TABLE IF NOT EXISTS mounting_arrangement(
+    uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    measurement_point_uuid UUID NOT NULL,
+    mast_section_geometry_uuid UUID,
+    mounting_type_id text,
+    boom_orientation_deg decimal CHECK (boom_orientation_deg >= 0 AND boom_orientation_deg <= 360),
+    vane_dead_band_orientation_deg decimal CHECK (vane_dead_band_orientation_deg >= 0 AND vane_dead_band_orientation_deg <= 360),
+    orientation_reference_id text,
+    tilt_angle_deg decimal CHECK (tilt_angle_deg >= -90 AND tilt_angle_deg <= 90),
+    boom_oem text,
+    boom_model text,
+    upstand_height_mm decimal,
+    upstand_diameter_mm decimal,
+    boom_diameter_mm decimal,
+    boom_length_mm decimal,
+    distance_from_mast_to_sensor_mm decimal,
+    date_from timestamp WITHOUT TIME ZONE NOT NULL,
+    date_to timestamp WITHOUT TIME ZONE,
+    notes text,
+    update_at timestamp WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_by UUID,
+    FOREIGN KEY (measurement_point_uuid) REFERENCES measurement_point (uuid),
+    FOREIGN KEY (mast_section_geometry_uuid) REFERENCES mast_section_geometry (uuid),
+    FOREIGN KEY (mounting_type_id) REFERENCES mounting_type (id),
+    FOREIGN KEY (orientation_reference_id) REFERENCES orientation_reference (id)
+);
+
+CREATE TABLE IF NOT EXISTS interference_structures(
+    uuid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    structure_type_id text NOT NULL,
+    orientation_from_mast_centre_deg decimal CHECK (orientation_from_mast_centre_deg >= 0 AND orientation_from_mast_centre_deg <= 360),
+    orientation_reference_id text,
+    distance_from_mast_centre_mm decimal,
+    diameter_of_interference_structure_mm decimal,
+    date_from timestamp WITHOUT TIME ZONE NOT NULL,
+    date_to timestamp WITHOUT TIME ZONE,
+    notes text,
+    update_at timestamp WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_by UUID,
+    FOREIGN KEY (structure_type_id) REFERENCES structure_type (id),
+    FOREIGN KEY (orientation_reference_id) REFERENCES orientation_reference (id)
+);
+
+CREATE TABLE IF NOT EXISTS measurement_point_interference_structures(
+    measurement_point_uuid UUID,
+    interference_structures_uuid UUID,
+    PRIMARY KEY (measurement_point_uuid, interference_structures_uuid),
+    FOREIGN KEY (measurement_point_uuid) REFERENCES measurement_point (uuid),
+    FOREIGN KEY (interference_structures_uuid) REFERENCES interference_structures (uuid)
+);
+

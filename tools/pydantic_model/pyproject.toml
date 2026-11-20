@@ -1,0 +1,103 @@
+[tool.poetry]
+name = "wra-data-model-pydantic"
+version = "0.0.1"
+description = "A Pydantic implementation of the IEA Task 43 WRA Data Model, generated from its JSON Schema."
+authors = ["Stephen Peters <stephen.peters@res-group.com>"]
+readme = "README.md"
+packages = [{ include = "wra_data_model_pydantic" }]
+package-mode = true
+
+[tool.poetry.dependencies]
+# The model itself depends only on Pydantic. Everything needed to work with the example
+# notebook lives in the optional "notebook" group below, so neither CI nor a consumer
+# installing the model pulls in Jupyter or the plotting stack.
+python = "^3.11, <4.0"
+pydantic = "^2.11.4"
+
+[tool.poetry.group.notebook]
+optional = true
+
+[tool.poetry.group.notebook.dependencies]
+pandas = "^2.2.3"
+numpy = "^2.1.0"
+ipykernel = "^6.29.5"
+
+[tool.poetry.group.dev.dependencies]
+# datamodel-code-generator and ruff are pinned exactly, not by caret range. Both determine
+# the bytes of the generated model: the generator produces it and `ruff format` normalises
+# it. A different version of either produces a different file, which would make the CI
+# schema/model sync check fail against a model that is in fact correct. Bump them
+# deliberately, regenerate, and review the resulting diff.
+datamodel-code-generator = "0.75.1"
+ruff = "0.16.4"
+
+pytest = "^9.1.1"
+poethepoet = "^0.33.0"
+mypy = "^2.3.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+exclude = ["old"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "Q", "UP", "I", "N"]
+
+[tool.ruff.lint.per-file-ignores]
+# The model is generated from the JSON Schema by generate_model.py. Its long docstring
+# lines are specification descriptions and its mixed-case enum members are vendor names
+# taken verbatim from the schema, so neither is hand-editable.
+"wra_data_model_pydantic/model.py" = ["E501", "N815"]
+
+[tool.mypy]
+python_version = "3.11"
+ignore_missing_imports = true
+exclude = ["old"]
+disallow_untyped_defs = true
+
+[[tool.mypy.overrides]]
+# The schema defines statistic types such as `count` which, as members of a generated
+# StrEnum, shadow the same-named `str` methods. The members validate correctly at
+# runtime; only mypy objects to the redefinition.
+module = "wra_data_model_pydantic.model"
+disable_error_code = ["assignment"]
+
+[tool.poe.tasks]
+[tool.poe.tasks.generate]
+help = "Regenerate the model from the JSON Schema"
+sequence = [
+    { cmd = "poetry run python generate_model.py" },
+]
+
+[tool.poe.tasks.lint]
+help = "Lint"
+sequence = [
+    { cmd = "poetry run ruff check wra_data_model_pydantic tests generate_model.py" },
+    { cmd = "poetry run ruff format --check wra_data_model_pydantic tests generate_model.py" },
+    { cmd = "poetry run mypy wra_data_model_pydantic tests generate_model.py" },
+]
+
+[tool.poe.tasks.fmt]
+help = "Format code"
+sequence = [
+    { cmd = "poetry run ruff format wra_data_model_pydantic tests generate_model.py" },
+    { cmd = "poetry run ruff check wra_data_model_pydantic tests generate_model.py --fix" },
+]
+
+[tool.poe.tasks.test]
+help = "Run tests"
+sequence = [
+    { cmd = "poetry run pytest tests" },
+]
+
+[tool.poe.tasks.check]
+help = "Check code"
+sequence = [
+    { ref = "fmt" },
+    { ref = "lint" },
+    { ref = "test" },
+]

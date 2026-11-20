@@ -10,6 +10,20 @@ Given a version number MAJOR.MINOR.PATCH, increment the:
 Additional labels for pre-release and build metadata are available as extensions to the MAJOR.MINOR.PATCH format.
 
 
-## [1.0.0-2025.05]
+## [1.1.0-202X.XX]
+1. To `measurement_station_type` add 
+   1. `seabed_frame` (Issue [#294](https://github.com/IEA-Task-43/digital_wra_data_standard/issues/294))
+   1. `moored` (Issue [#294](https://github.com/IEA-Task-43/digital_wra_data_standard/issues/294))
+
+       Note: `adcp` will be removed from this enum in version 2.0.0 release.
+
+1. In `logger_oem`
+   1. remove the enum constraint. This allows more flexibility and the below renaming of existing entries without it been a breaking change. (Issue [#293](https://github.com/IEA-Task-43/digital_wra_data_standard/issues/293))
+   1. add a significant number of additional entries (Issue [#293](https://github.com/IEA-Task-43/digital_wra_data_standard/issues/293))
+   1. rename `Kintech` to `Kintech Engineering` (Issue [#275](https://github.com/IEA-Task-43/digital_wra_data_standard/issues/275))
+   1. rename `Ammonit` to `Ammonit Measurement GmbH` (Issue [#292](https://github.com/IEA-Task-43/digital_wra_data_standard/issues/292))
+   1. remove `Other` from the suggestion list as free-text input now serves this purpose.
+
+## [1.0.0-2025.06]
 - Initial release
 
