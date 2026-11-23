@@ -19,6 +19,33 @@ print(wra_data_model.measurement_location[0].name)
 
 A worked example is in the [load_demo_schema_to_model.ipynb](../load_demo_schema_to_model.ipynb) notebook.
 
+## Schema version
+
+The package version matches the version of the JSON Schema it was generated from, so there is one version number rather than two. The schema version also encodes the release month, as in `1.4.0-2025.06`, which is not a valid Python package version, so the package carries the `MAJOR.MINOR.PATCH` part and the full value is available as a constant:
+
+```python
+from wra_data_model_pydantic.model import SCHEMA_VERSION
+
+SCHEMA_VERSION  # '1.4.0-2025.06'
+```
+
+When checking a data file against the model, compare the `MAJOR.MINOR.PATCH` part rather than the whole string. The trailing `YYYY.MM` records when a version was released and carries no compatibility meaning, so two files that differ only in that suffix are the same version of the standard.
+
+```python
+def schema_version_of(value: str) -> tuple[int, ...]:
+    return tuple(int(part) for part in value.split("-", 1)[0].split("."))
+
+file_version = schema_version_of(wra_data_model.version)
+model_version = schema_version_of(SCHEMA_VERSION)
+
+if file_version[0] != model_version[0]:
+    raise ValueError(f"file is major version {file_version[0]}, model implements {model_version[0]}")
+```
+
+A differing major version means the file and the model are incompatible. A differing minor or patch version is usually safe, because changes within a major version have so far been additive, though a file from a newer version may contain values this model does not know about.
+
+Note that the schema version is raised at release rather than on each change, so between releases the constant reports the last released version while the model may already contain newer fields.
+
 ## Environment
 
 Dependencies are managed with [Poetry](https://python-poetry.org/). Run from this directory:

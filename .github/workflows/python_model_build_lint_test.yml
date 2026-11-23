@@ -88,12 +88,14 @@ jobs:
       - name: Fail if the committed model is out of sync with the schema
         shell: bash
         run: |
-          if ! git diff --quiet -- wra_data_model_pydantic/iea43_wra_data_model.py; then
-            echo "::error file=tools/pydantic_model/wra_data_model_pydantic/iea43_wra_data_model.py::The Pydantic model does not match the JSON Schema. Run 'poetry run poe generate' in tools/pydantic_model and commit the result."
-            git --no-pager diff -- wra_data_model_pydantic/iea43_wra_data_model.py
+          # Generation writes the model itself and the package version in pyproject.toml,
+          # which tracks the schema version. Both must match what is committed.
+          if ! git diff --quiet -- wra_data_model_pydantic/model.py pyproject.toml; then
+            echo "::error file=tools/pydantic_model/wra_data_model_pydantic/model.py::The Pydantic model or its package version does not match the JSON Schema. Run 'poetry run poe generate' in tools/pydantic_model and commit the result."
+            git --no-pager diff -- wra_data_model_pydantic/model.py pyproject.toml
             exit 1
           fi
-          echo "Model is in sync with the JSON Schema."
+          echo "Model and package version are in sync with the JSON Schema."
 
       - name: Run lint tests
         run: poetry run poe lint

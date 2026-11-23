@@ -188,6 +188,31 @@ def patch_schema_version(source: str, version: str) -> str:
     return source
 
 
+def sync_package_version(schema_version: str) -> None:
+    """Align the package version in pyproject.toml with the schema version.
+
+    The package and the schema describe the same thing, so they carry one version rather
+    than two. The schema version also encodes the release month, as in `1.4.0-2025.06`,
+    which is not a valid Python package version, so the package takes the `MAJOR.MINOR.PATCH`
+    part and the full value is available to code as `SCHEMA_VERSION`.
+    """
+    package_version = schema_version.split("-", 1)[0]
+    pyproject = HERE / "pyproject.toml"
+    content = pyproject.read_text(encoding="utf-8")
+
+    pattern = re.compile(r'^(name = "wra-data-model-pydantic"\nversion = ")([^"]*)(")', re.MULTILINE)
+    match = pattern.search(content)
+    if match is None:
+        raise SystemExit("could not find the package version in pyproject.toml")
+
+    if match.group(2) != package_version:
+        content = pattern.sub(rf"\g<1>{package_version}\g<3>", content, count=1)
+        pyproject.write_text(content, encoding="utf-8")
+        print(f"  package version: raised to {package_version} to match the schema")
+    else:
+        print(f"  package version: already {package_version}")
+
+
 def patch_ref_descriptions(source: str, descriptions: dict[str, tuple[str, str]]) -> str:
     """Restore title and description on bare ref fields that carry a default."""
     patched = 0
@@ -248,6 +273,7 @@ def main() -> int:
     if not schema_version:
         raise SystemExit('the JSON Schema has no "$version" key to record in the model')
     source = patch_schema_version(source, schema_version)
+    sync_package_version(schema_version)
 
     bare_ref_fields = set(re.findall(r"^    ([a-z_0-9]+): [A-Z][A-Za-z0-9]* \| None = .+$", source, re.MULTILINE))
     source = patch_ref_descriptions(source, ref_descriptions(schema, bare_ref_fields))
