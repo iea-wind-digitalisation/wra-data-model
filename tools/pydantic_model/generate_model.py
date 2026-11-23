@@ -1,4 +1,4 @@
-"""Generate the Pydantic data model from the IEA Task 43 WRA Data Model JSON Schema.
+"""Generate the Pydantic data model from the IEA Wind WRA Data Model JSON Schema.
 
 The model is produced by `datamodel-code-generator` and is not edited by hand. Two
 constraints expressed in the JSON Schema cannot be emitted by the generator, so they are
@@ -8,6 +8,8 @@ applied here as deterministic post-generation patches:
    duplicate items to fail validation rather than be quietly accepted.
 2. `description` and `title` on properties that are a bare `$ref` carrying a default. The
    generator omits both for that shape.
+3. `SCHEMA_VERSION`, taken from the schema's own `$version` key. The generator translates
+   only `properties` and `definitions`, so schema-level metadata is not carried across.
 
 Each patch asserts that it changed at least one site. If a generator upgrade moves or
 removes a site, generation fails loudly instead of silently producing a weaker model.
@@ -163,6 +165,29 @@ def patch_unique_lists(source: str, names: set[str]) -> str:
     return source
 
 
+def patch_schema_version(source: str, version: str) -> str:
+    """Record the schema version the model was generated from, as a module constant.
+
+    The code generator only translates `properties` and `definitions` into Python, so the
+    schema's own `$version` key is not carried across. Downstream code needs it to report a
+    mismatch between the model and a data model file declaring a different version.
+    """
+    anchor = "from pydantic_core import PydanticCustomError\n"
+    if anchor not in source:
+        raise SystemExit("schema version patch could not find the import block")
+    constant = (
+        anchor
+        + "\n"
+        + "# The version of the WRA Data Model JSON Schema this model was generated from, taken\n"
+        + '# from the schema\'s own "$version" key. It is updated when the schema version is\n'
+        + "# raised at release and the model regenerated.\n"
+        + f'SCHEMA_VERSION = "{version}"\n'
+    )
+    source = source.replace(anchor, constant, 1)
+    print(f"  schema version: recorded SCHEMA_VERSION = {version}")
+    return source
+
+
 def patch_ref_descriptions(source: str, descriptions: dict[str, tuple[str, str]]) -> str:
     """Restore title and description on bare ref fields that carry a default."""
     patched = 0
@@ -218,6 +243,11 @@ def main() -> int:
     source = OUTPUT.read_text(encoding="utf-8")
     print("Applying post-generation patches:")
     source = patch_unique_lists(source, unique_item_properties(schema))
+
+    schema_version = schema.get("$version")
+    if not schema_version:
+        raise SystemExit('the JSON Schema has no "$version" key to record in the model')
+    source = patch_schema_version(source, schema_version)
 
     bare_ref_fields = set(re.findall(r"^    ([a-z_0-9]+): [A-Z][A-Za-z0-9]* \| None = .+$", source, re.MULTILINE))
     source = patch_ref_descriptions(source, ref_descriptions(schema, bare_ref_fields))

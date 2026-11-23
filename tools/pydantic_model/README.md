@@ -1,6 +1,6 @@
 # Pydantic Data Model
 
-A [Pydantic](https://docs.pydantic.dev/latest/) implementation of the _IEA Task 43 WRA Data Model_, generated from [`schema/iea43_wra_data_model.schema.json`](../../schema/iea43_wra_data_model.schema.json).
+A [Pydantic](https://docs.pydantic.dev/latest/) implementation of the _IEA Wind WRA Data Model_, generated from [`schema/iea43_wra_data_model.schema.json`](../../schema/iea43_wra_data_model.schema.json).
 
 It validates and parses JSON data files that follow the _WRA Data Model_, and gives an object-oriented way to work with that data in Python, including code completion and type checking in modern IDEs.
 

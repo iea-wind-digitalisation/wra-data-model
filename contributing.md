@@ -113,6 +113,8 @@ Regenerating as part of the change also puts the resulting API change in front o
 
 `datamodel-code-generator` and `ruff` are pinned to exact versions rather than version ranges, because both determine the content of the generated file. Upgrading either is therefore a deliberate change: raise the version, regenerate, and review the resulting diff.
 
+The generated model carries a `SCHEMA_VERSION` constant, taken from the `$version` key of the JSON Schema itself, so that code using the model can report a mismatch against a data model file declaring a different version. The schema version is raised at release rather than on each change, as set out in the [release procedure](release_procedure.md), and the model must be regenerated afterwards so the constant follows. Between releases the constant therefore reports the last released version.
+
 ### When a property cannot be generated correctly
 
 Some JSON Schema constructs cannot be expressed by the code generator. The fix always belongs in the generation process, never in the model file. In order of preference:

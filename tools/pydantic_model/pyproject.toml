@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "wra-data-model-pydantic"
 version = "0.0.1"
-description = "A Pydantic implementation of the IEA Task 43 WRA Data Model, generated from its JSON Schema."
+description = "A Pydantic implementation of the IEA Wind WRA Data Model, generated from its JSON Schema."
 authors = ["Stephen Peters <stephen.peters@res-group.com>"]
 readme = "README.md"
 packages = [{ include = "wra_data_model_pydantic" }]

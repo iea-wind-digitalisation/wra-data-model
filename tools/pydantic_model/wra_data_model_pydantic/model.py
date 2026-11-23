@@ -12,6 +12,12 @@ from uuid import UUID
 from pydantic import AfterValidator, BaseModel, ConfigDict, Field
 from pydantic_core import PydanticCustomError
 
+# The version of the WRA Data Model JSON Schema this model was generated from, taken
+# from the schema's own "$version" key. It is updated when the schema version is
+# raised at release and the model regenerated.
+SCHEMA_VERSION = "1.4.0-2025.06"
+
+
 T = TypeVar("T")
 
 
