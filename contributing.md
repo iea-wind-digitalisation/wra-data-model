@@ -35,6 +35,7 @@ Typical files that are modified when working on an Issue are:
 - The [data model](https://github.com/IEA-Task-43/digital_wra_data_standard/blob/master/schema/iea43_wra_data_model.schema.json) itself
 - The [demo file](https://github.com/IEA-Task-43/digital_wra_data_standard/blob/master/demo_data/iea43_wra_data_model.json) implementation
 - The [create SQL](https://github.com/IEA-Task-43/digital_wra_data_standard/blob/master/tools/iea43_wra_data_model_postgresql.sql) statements
+- The [Pydantic data model](tools/pydantic_model), which is generated from the JSON Schema and must be regenerated rather than edited by hand
 - The [CHANGELOG.md](https://github.com/IEA-Task-43/digital_wra_data_standard/blob/master/CHANGELOG.md)
 
 Be sure to periodically synchronize the upstream `dev` branch into your feature branch to avoid conflicts in the pull request. 
@@ -70,6 +71,7 @@ Tools like [jsonschemavalidator](https://www.jsonschemavalidator.net/) can help 
 on the left and the demo file on the right. If it is valid the green tick with "No errors found. JSON validates against the schema" will be shown.
 * Ensure that the PostgreSQL create table SQL statements contained in [iea43_wra_data_model_postgresql.sql](https://github.com/IEA-Task-43/digital_wra_data_standard/blob/master/tools/iea43_wra_data_model_postgresql.sql)
 are compatible with the adjusted Schema. If relevant, update the demo data SQL statements too [iea43_wra_data_model_demo_data.sql](https://github.com/IEA-Task-43/digital_wra_data_standard/blob/master/demo_data/iea43_wra_data_model_demo_data.sql).
+* Regenerate the Pydantic data model by running `poetry run poe generate` from the `tools/pydantic_model` directory, and commit the result. The model is generated from the JSON Schema and is never edited by hand. The 'Python Model Build, Lint, and Test' pipeline does not produce the committed model; it regenerates a copy of its own purely to compare, and fails if the two differ. A schema change that has not been carried into the model will therefore not pass review.
 
 **Documentation:** TBD
 <!---Include any relevant changes to inline documentation, as well as any changes to the RST files located in /sphinx.--->
@@ -90,6 +92,42 @@ TBD but may define guidelines for validating the schema
 All code should be paired with a corresponding unit or integration test.
 digital_wra_data_standard uses pytest and the built in unittest framework.
 For instructions on running tests, please see the [Readme](testing link).-->
+
+## Maintaining the Pydantic Data Model
+
+The [Pydantic data model](tools/pydantic_model) is a Python implementation of the _WRA Data Model_, generated from the JSON Schema. It is never edited by hand. A manual change survives only until the next regeneration, and the pipeline rejects it before then.
+
+### Regenerating after a schema change
+
+Run the following from the `tools/pydantic_model` directory and commit the result alongside the schema change:
+
+```bash
+poetry run poe generate
+```
+
+That command generates the model with a pinned set of code generator flags, applies the post-generation patches described below, and formats the result with `ruff`. The one-time environment setup is described in the [Pydantic data model README](tools/pydantic_model/README.md).
+
+The generated model is committed to the repository because it is the file that users import, so it has to be present rather than built on demand. The 'Python Model Build, Lint, and Test' pipeline does not produce that file. It regenerates a copy of its own, purely to compare against the committed one, and fails if the two differ. A schema change that has not been carried into the model therefore cannot pass review.
+
+Regenerating as part of the change also puts the resulting API change in front of a reviewer. A field becoming required, or an enum value disappearing, is a breaking change for anyone using the model, and it is visible in the pull request diff rather than appearing after the change has been merged.
+
+`datamodel-code-generator` and `ruff` are pinned to exact versions rather than version ranges, because both determine the content of the generated file. Upgrading either is therefore a deliberate change: raise the version, regenerate, and review the resulting diff.
+
+The generated model carries a `SCHEMA_VERSION` constant, taken from the `$version` key of the JSON Schema itself, so that code using the model can report a mismatch against a data model file declaring a different version. The schema version is raised at release rather than on each change, as set out in the [release procedure](release_procedure.md), and the model must be regenerated afterwards so the constant follows. Between releases the constant therefore reports the last released version.
+
+### When a property cannot be generated correctly
+
+Some JSON Schema constructs cannot be expressed by the code generator. The fix always belongs in the generation process, never in the model file. In order of preference:
+
+1. **Set a code generator flag.** Most cases are solved this way and need no custom code. The flags, each with the reason it is set, are listed in `CODEGEN_FLAGS` in [generate_model.py](tools/pydantic_model/generate_model.py). For example, the generator maps the `date-time` format to a timezone-aware type by default, which rejects every timestamp in the _WRA Data Model_ because the UTC offset is carried separately in `offset_from_utc_hrs`. Setting `--output-datetime-class datetime` corrects this.
+2. **Add a post-generation patch.** Where no flag exists, add a patch function to [generate_model.py](tools/pydantic_model/generate_model.py). Two exist already: `uniqueItems` on arrays, which the generator drops silently, and `description` and `title` on a property that is a bare `$ref` carrying a default, which the generator omits. Both read their values from the JSON Schema rather than restating them, so neither can fall out of step with the specification, and both fail the build if any expected site is missing.
+3. **Change the JSON Schema.** Appropriate only where the schema construct is itself ambiguous or incorrect. The specification should not be altered merely to suit a code generator.
+
+### Testing a new constraint
+
+Most failures are loud. The code generator exits with an error, a patch function fails if an expected site is missing, and the test suite validates every file in [demo_data](demo_data) against the model.
+
+A constraint that is silently weakened is the exception. Where a schema change adds a restriction such as a pattern, a bound or a uniqueness rule, and no demo file violates it, nothing fails even though the model is wrong. Add a test to [test_model.py](tools/pydantic_model/tests/test_model.py) proving that an invalid value is rejected, rather than only that valid data still passes. The existing tests for duplicate array items and for malformed `classification` values show the pattern.
 
 ## Creating a GitHub Release
 

@@ -63,6 +63,8 @@ The following tools are part of this undertaking:
 - [Python Data Model Loading Example](./tools/load_demo_schema.ipynb): This notebook shows how to read an example file that 
   uses the _WRA Data Model_ with Python. [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/IEA-Task-43/digital_wra_data_standard/master?filepath=.%2Ftools%2Fload_demo_schema.ipynb)
 
+- [Pydantic Data Model](./tools/pydantic_model): A Python implementation of the _WRA Data Model_, generated from the JSON Schema. It validates and parses JSON data files against the _WRA Data Model_ and provides code completion and type checking in modern IDEs.
+
 ## Dissemination
 The Task 43 team is actively working to disseminate information and improve user experience. 
 The [Wiki](https://github.com/IEA-Task-43/digital_wra_data_standard/wiki) tab in this GitHub repository is the starting 
@@ -116,3 +118,4 @@ You can find out more about the IEA's Wind Task 43 working group at [ieawindtask
 |:---------|:-------|:-------|
 | Documentation | ![Compile Documentation to HTML](https://github.com/IEA-Task-43/digital_wra_data_standard/workflows/Compile%20Documentation%20to%20HTML/badge.svg) | [Documentation](https://iea-task-43.github.io/digital_wra_data_standard/docs/schema_doc.html) |
 | Form App | ![Deploy Form App to GitHub Pages](https://github.com/IEA-Task-43/digital_wra_data_standard/workflows/Deploy%20Form%20App%20to%20GitHub%20Pages/badge.svg) | [Form App](https://iea-task-43.github.io/digital_wra_data_standard/) |
+| Pydantic Data Model | ![Python Model Build, Lint, and Test](https://github.com/IEA-Task-43/digital_wra_data_standard/workflows/Python%20Model%20Build%2C%20Lint%2C%20and%20Test/badge.svg) | [Pydantic Data Model](./tools/pydantic_model) |

@@ -8,8 +8,9 @@ the `dev` branch. Therefore, the `dev` branch will be cleaned up first.
 1. In the `dev` branch update the version number in:
    1. the actual JSON Schema file itself,
    2. all the relevant demo implementation files in the demo_data folder,
-   3. the CHANGELOG file and
-   4. the description of the SQL create table file.
+   3. the CHANGELOG file,
+   4. the description of the SQL create table file and
+   5. the Pydantic data model, which is not edited by hand. Regenerate it by running `poetry run poe generate` from the `tools/pydantic_model` directory, so that its `SCHEMA_VERSION` constant picks up the new schema version. See [contributing.md](contributing.md) for details.
 2. Do a pull request to merge the `dev` branch into `master`.
 3. The documentation is automatically generated when there is a merge into `master`. Make sure that this has completed successfully.
 4. Go to 'Releases' on GitHub and 'Draft a new release'.

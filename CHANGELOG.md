@@ -48,6 +48,7 @@ Additional labels for pre-release and build metadata are available as extensions
    1. `digital_baud_rate` (Issue [#307](https://github.com/IEA-Task-43/digital_wra_data_standard/issues/307))
 1. In `model_config`
    1. remove the enum constraint from `reanalysis`, allowing any string or null. The existing enum values are retained as suggested values. `Other` has been removed as free-text input now serves this purpose. (Issue [#318](https://github.com/IEA-Task-43/digital_wra_data_standard/issues/318))
+1. Add a [Pydantic data model](tools/pydantic_model), a Python implementation of the _WRA Data Model_ generated from the JSON Schema, for validating and parsing data files in Python. Note: this has no impact on the JSON Schema. (PR [#281](https://github.com/IEA-Task-43/digital_wra_data_standard/pull/281))
 
 
 ## [1.4.0-2025.06]

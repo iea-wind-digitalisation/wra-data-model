@@ -26,3 +26,5 @@ Notes.txt
 # Claude configuration and environment files
 .claude/
 claude*.*
+# Poetry in-project virtual environment (tools/pydantic_model)
+.venv/
