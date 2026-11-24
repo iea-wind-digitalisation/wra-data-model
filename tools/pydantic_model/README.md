@@ -4,6 +4,8 @@ A [Pydantic](https://docs.pydantic.dev/latest/) implementation of the _IEA Wind 
 
 It validates and parses JSON data files that follow the _WRA Data Model_, and gives an object-oriented way to work with that data in Python, including code completion and type checking in modern IDEs.
 
+**Python 3.11 or later is required.** The model uses `StrEnum`, built-in generics and the `X | None` union operator, none of which are available earlier, and Pydantic v2 itself requires 3.9 or later. Importing the model on an older interpreter fails with `ImportError: cannot import name 'StrEnum' from 'enum'`.
+
 ## Usage
 
 ```python
